@@ -17,7 +17,7 @@
 	"require": {
 		"php": "~7.4.0",
 		"typo3/cms": "~9.5.0",
-		"typo3/surf": "^2.0.0"
+		"typo3/surf": "*"
 	},
 	"autoload": {
 		"psr-4": {
