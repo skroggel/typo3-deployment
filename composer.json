@@ -15,8 +15,8 @@
 		}
 	],
 	"require": {
-		"php": "~7.4.0",
-		"typo3/cms": "~9.5.0",
+        "php": "~7.4.0",
+        "typo3/cms-base-distribution": "~9.5.0",
 		"typo3/surf": "*"
 	},
 	"autoload": {
