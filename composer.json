@@ -1,0 +1,27 @@
+{
+	"name": "madj2k/t3-deployment",
+	"description": "Deployments for TYPO3",
+	"license": ["GPL-3.0+"],
+	"keywords": ["TYPO3 CMS", "Surf", "Deployment"],
+	"support": {
+		"email": "developer@steffenkroggel.de"
+	},
+	"authors": [
+		{
+			"name": "Steffen Kroggel",
+			"email": "developer@steffenkroggel.de",
+			"homepage": "http://www.steffenkroggel.de",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": "~7.4.0",
+		"typo3/cms": "~9.5.0",
+		"typo3/surf": "^2.0.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Madj2k\\SurfDeployment\\": "Classes"
+		}
+	}
+}
