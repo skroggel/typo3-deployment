@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment\Task\Local\File;
+namespace Madj2k\Surf\Task\Remote;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -13,20 +13,20 @@ namespace Madj2k\TYPO3Deployment\Task\Local\File;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\Surf\Task\LocalShellTask;
+use TYPO3\Surf\Task\ShellTask;
 use TYPO3\Surf\Domain\Model\Application;
 use TYPO3\Surf\Domain\Model\Deployment;
 use TYPO3\Surf\Domain\Model\Node;
 
 /**
- * Class CopyHtaccessFileTask
+ * Class NotifyTask
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class CopyHtaccessFileTask extends LocalShellTask
+class NotifyTask extends ShellTask
 {
 
     /**
@@ -41,15 +41,12 @@ class CopyHtaccessFileTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = ($this->getOption('webDirectory')? $this->getOption('webDirectory') .'/' : '');
-        $options['command'] =  'cd {workspacePath}' .
-            ' && if [ -f "./' . $webDir . '_.htaccess.' . $this->getOption('fileExtension') . '" ]; then' . 
-                ' cp ./' . $webDir . '_.htaccess.' . $this->getOption('fileExtension') . ' ./' . $webDir . '.htaccess;' . 
-            ' fi' . 
-            ' && if [ -f "./' . $webDir . '_.htpasswd.' . $this->getOption('fileExtension') . '" ]; then' .
-                ' cp ./' . $webDir . '_.htpasswd.' . $this->getOption('fileExtension') . ' ./' . $webDir . '.htpasswd;' . 
-            ' fi' . 
-            ' && echo "Copied .htaccess in {workspacePath}/' . $webDir . '.";';
+        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
+        $options['command'] = 'cd {releasePath}' .
+            ' && if [ -f "./' . $webDir . 'changelog" ]; then' .
+                ' mail -s "A new release is online now! (branch ' . escapeshellarg($this->getOption('branch')) . ')" '
+                    . escapeshellarg($this->getOption('adminMail')) . ' < ./' . $webDir . 'changelog;' .
+            ' fi';
 
         parent::execute($node, $application, $deployment, $options);
     }

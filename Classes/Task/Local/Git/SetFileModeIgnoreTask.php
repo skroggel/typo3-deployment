@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment\Task\Local\Git;
+namespace Madj2k\Surf\Task\Local\Git;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -19,14 +19,14 @@ use TYPO3\Surf\Domain\Model\Deployment;
 use TYPO3\Surf\Domain\Model\Node;
 
 /**
- * Class SetGitFileModeIgnore
+ * Class SetFileModeIgnore
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class SetGitFileModeIgnore extends LocalShellTask
+class SetFileModeIgnoreTask extends LocalShellTask
 {
 
     /**

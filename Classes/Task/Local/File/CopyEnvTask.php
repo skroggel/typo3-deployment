@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment\Task\Remote\File;
+namespace Madj2k\Surf\Task\Local\File;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -13,20 +13,20 @@ namespace Madj2k\TYPO3Deployment\Task\Remote\File;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\Surf\Task\ShellTask;
+use TYPO3\Surf\Task\LocalShellTask;
 use TYPO3\Surf\Domain\Model\Application;
 use TYPO3\Surf\Domain\Model\Deployment;
 use TYPO3\Surf\Domain\Model\Node;
 
 /**
- * Class ixFolderStructureTask
+ * Class CopyEnvTask
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class FixFolderStructureTask extends ShellTask
+class CopyEnvTask extends LocalShellTask
 {
 
     /**
@@ -41,8 +41,11 @@ class FixFolderStructureTask extends ShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $options['command'] =  'cd {releasePath}' .
-            ' && ./vendor/bin/typo3 install:fixfolderstructure';
+        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
+        $options['command'] =  'cd {workspacePath}' .
+            ' && if [ -f "_.env.' . $fileExtension . '" ];' . 
+                ' then cp _.env.' . $fileExtension . ' .env;'. 
+            ' fi';
 
         parent::execute($node, $application, $deployment, $options);
     }

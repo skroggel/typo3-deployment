@@ -1,12 +1,12 @@
 <?php
-namespace Madj2k\TYPO3Deployment\Domain\Model;
+namespace Madj2k\Surf\Domain\Model;
 
 /**
  * Class Node
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later */
 
 class Node extends \TYPO3\Surf\Domain\Model\Node

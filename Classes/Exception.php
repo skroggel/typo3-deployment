@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment;
+namespace Madj2k\Surf;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -19,7 +19,7 @@ namespace Madj2k\TYPO3Deployment;
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class Exception extends \Exception

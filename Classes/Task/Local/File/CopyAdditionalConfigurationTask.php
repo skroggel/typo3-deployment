@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment\Task\Local\File;
+namespace Madj2k\Surf\Task\Local\File;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -23,7 +23,7 @@ use TYPO3\Surf\Domain\Model\Node;
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class CopyAdditionalConfigurationTask extends LocalShellTask
@@ -41,10 +41,11 @@ class CopyAdditionalConfigurationTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = ($this->getOption('webDirectory')? $this->getOption('webDirectory') .'/' : '');
+        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
+        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
         $options['command'] = 'cd {workspacePath}' . 
-         ' && if [ -f "./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $this->getOption('fileExtension') . '.php" ]; then' . 
-                ' cp ./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $this->getOption('fileExtension') . '.php' . 
+         ' && if [ -f "./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $fileExtension . '.php" ]; then' . 
+                ' cp ./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $fileExtension . '.php' . 
                     ' ./' . $webDir . 'typo3conf/AdditionalConfiguration.php;' . 
         ' fi' . 
         ' && echo "Copied AdditionalConfiguration.php in {workspacePath}/' . $webDir . '."';

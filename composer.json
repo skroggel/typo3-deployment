@@ -1,5 +1,5 @@
 {
-	"name": "madj2k/t3-deployment",
+	"name": "madj2k/t3-surf",
 	"description": "Deployments for TYPO3",
 	"license": ["GPL-3.0+"],
 	"keywords": ["TYPO3 CMS", "Surf", "Deployment"],
@@ -22,7 +22,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Madj2k\\TYPO3Deployment\\": "Classes"
+			"Madj2k\\Surf\\": "Classes"
 		}
 	}
 }

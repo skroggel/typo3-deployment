@@ -3,22 +3,25 @@
  * Credentials
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @copyright Steffen Kroggel
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @version 1.0.3
  */
 return [
-    'projectName' => 'Madj2k',
-    'deploymentPath' => '/var/www/kroggel.codes/surf',
+    'projectName' => 'Example',
+    'deploymentPath' => '/var/www/example.com/surf',
     'phpBinaryPathAndFilename' => '/usr/bin/php7.4',
-    'adminMail' => 'deployment@steffenkroggel.de',
+    'adminMail' => 'deployment@example.com',
 
     'hostname' => '',
     'username' => '',
     'password' => '',
     'port' => '',
 
-    'repositoryUrl' => 'https://github.com/Madj2k/Example.git',
-    'branch' => 'staging'
+    'repositoryUrl' => 'https://github.com/Test/Example.git',
+    'branch' => 'staging',
+    
+    'doUpgrade' => false,
+    'queryFileBeforeUpgrade' => '',
+    'queryFileAfterUpgrade' => ''
 ];

@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment\Task\Local\File;
+namespace Madj2k\Surf\Task\Local\File;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -19,14 +19,14 @@ use TYPO3\Surf\Domain\Model\Deployment;
 use TYPO3\Surf\Domain\Model\Node;
 
 /**
- * Class CopyEnvFileTask
+ * Class CopyHtaccessTask
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class CopyEnvFileTask extends LocalShellTask
+class CopyHtaccessTask extends LocalShellTask
 {
 
     /**
@@ -41,10 +41,16 @@ class CopyEnvFileTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
+        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
+        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
         $options['command'] =  'cd {workspacePath}' .
-            ' && if [ -f "_.env.' . $this->getOption('fileExtension') . '" ];' . 
-                ' then cp _.env.' . $this->getOption('fileExtension') . ' .env;'. 
-            ' fi';
+            ' && if [ -f "./' . $webDir . '_.htaccess.' . $fileExtension . '" ]; then' . 
+                ' cp ./' . $webDir . '_.htaccess.' . $fileExtension . ' ./' . $webDir . '.htaccess;' . 
+            ' fi' . 
+            ' && if [ -f "./' . $webDir . '_.htpasswd.' . $fileExtension . '" ]; then' .
+                ' cp ./' . $webDir . '_.htpasswd.' . $fileExtension . ' ./' . $webDir . '.htpasswd;' . 
+            ' fi' . 
+            ' && echo "Copied .htaccess in {workspacePath}/' . $webDir . '.";';
 
         parent::execute($node, $application, $deployment, $options);
     }

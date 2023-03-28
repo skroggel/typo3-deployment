@@ -47,6 +47,7 @@ return [
 
     '--exclude /dev',
     '--exclude /scripts',
+    '--exclude /var',
     '--exclude /web/data*.txt',
     '--exclude /web/fileadmin',
     '--exclude /web/typo3conf/ENABLE_INSTALL_TOOL',

@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\TYPO3Deployment;
+namespace Madj2k\Surf;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,8 +14,8 @@ namespace Madj2k\TYPO3Deployment;
  * The TYPO3 project - inspiring people to share!
  */
 
-use Madj2k\TYPO3Deployment\Domain\Model\Application;
-use Madj2k\TYPO3Deployment\Domain\Model\Node;
+use Madj2k\Surf\Domain\Model\Application;
+use Madj2k\Surf\Domain\Model\Node;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\StreamOutput;
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
- * @package Madj2k_T3Deployment
+ * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @var \TYPO3\Surf\Domain\Model\Deployment $deployment
  */
@@ -47,7 +47,7 @@ class Deployment
      *
      * @param \TYPO3\Surf\Domain\Model\Deployment $deployment
      * @param $options
-     * @throws \Madj2k\TYPO3Deployment\Exception
+     * @throws \Madj2k\Surf\Exception
      */
     public function __construct(\TYPO3\Surf\Domain\Model\Deployment $deployment, $options)
     {
@@ -60,7 +60,7 @@ class Deployment
                 (! isset($mergedOptions[$key]))
                 && (! is_null($mergedOptions[$key]))
             ){
-                throw new \Madj2k\TYPO3Deployment\Exception(sprintf('Param "%s" has not been set.', $key));
+                throw new \Madj2k\Surf\Exception(sprintf('Param "%s" has not been set.', $key));
             }
         }
 

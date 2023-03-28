@@ -1,5 +1,5 @@
 <?php
-use  Madj2k\TYPO3Deployment\Deployment;
+use Madj2k\Surf\Deployment;
 
 /**
  * Deployment-Script
@@ -14,4 +14,4 @@ use  Madj2k\TYPO3Deployment\Deployment;
 $options = require_once __DIR__ . '/Credentials.php';
 
 // make deployment
-$Madj2kDeployment = new Deployment($deployment, $options);
+$myDeployment = new Deployment($deployment, $options);
