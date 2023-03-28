@@ -103,7 +103,7 @@ use Madj2k\Surf\Deployment;
  * Deployment-Script
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Steffen Kroggel
+ * @copyright Madj2k
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @var \TYPO3\Surf\Domain\Model\Deployment $deployment
  */
@@ -125,7 +125,7 @@ use Madj2k\Surf\Deployment;
  * Deployment-Script
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Steffen Kroggel
+ * @copyright Madj2k
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @var \TYPO3\Surf\Domain\Model\Deployment $deployment
  */
@@ -148,7 +148,7 @@ Example:
  * Credentials
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Steffen Kroggel
+ * @copyright Madj2k
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @version 1.0.3
  */
