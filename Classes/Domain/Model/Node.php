@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\SurfDeployment\Domain\Model;
+namespace Madj2k\TYPO3Deployment\Domain\Model;
 
 /**
  * Class Node

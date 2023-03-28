@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\SurfDeployment;
+namespace Madj2k\TYPO3Deployment;
 
 /*
  * This file is part of the TYPO3 CMS project.

@@ -1,5 +1,5 @@
 <?php
-use  Madj2k\SurfDeployment\Deployment;
+use  Madj2k\TYPO3Deployment\Deployment;
 
 /**
  * Deployment-Script

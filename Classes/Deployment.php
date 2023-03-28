@@ -1,5 +1,25 @@
 <?php
-namespace Madj2k\SurfDeployment;
+namespace Madj2k\TYPO3Deployment;
+
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
+use Madj2k\TYPO3Deployment\Domain\Model\Application;
+use Madj2k\TYPO3Deployment\Domain\Model\Node;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * Class Deployment
@@ -10,14 +30,6 @@ namespace Madj2k\SurfDeployment;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @var \TYPO3\Surf\Domain\Model\Deployment $deployment
  */
-
-use Madj2k\SurfDeployment\Domain\Model\Application;
-use Madj2k\SurfDeployment\Domain\Model\Node;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\StreamOutput;
-
 class Deployment
 {
     /**
@@ -35,7 +47,7 @@ class Deployment
      *
      * @param \TYPO3\Surf\Domain\Model\Deployment $deployment
      * @param $options
-     * @throws \Madj2k\SurfDeployment\Exception
+     * @throws \Madj2k\TYPO3Deployment\Exception
      */
     public function __construct(\TYPO3\Surf\Domain\Model\Deployment $deployment, $options)
     {
@@ -48,7 +60,7 @@ class Deployment
                 (! isset($mergedOptions[$key]))
                 && (! is_null($mergedOptions[$key]))
             ){
-                throw new \Madj2k\SurfDeployment\Exception(sprintf('Param "%s" has not been set.', $key));
+                throw new \Madj2k\TYPO3Deployment\Exception(sprintf('Param "%s" has not been set.', $key));
             }
         }
 

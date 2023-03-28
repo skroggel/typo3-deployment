@@ -1,5 +1,5 @@
 <?php
-namespace Madj2k\SurfDeployment\Domain\Model;
+namespace Madj2k\TYPO3Deployment\Domain\Model;
 
 /**
  * Class Application
@@ -49,7 +49,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
      * Init application
      *
      * @param $options
-     * @throws \Madj2k\SurfDeployment\Exception
+     * @throws \Madj2k\TYPO3Deployment\Exception
      */
     public function initApplication($options)
     {
@@ -62,7 +62,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
                 (! isset($mergedOptions[$key]))
                 && (! is_null($mergedOptions[$key]))
             ){
-                throw new \Madj2k\SurfDeployment\Exception(sprintf('Param "%s" has not been set.', $key));
+                throw new \Madj2k\TYPO3Deployment\Exception(sprintf('Param "%s" has not been set.', $key));
             }
 
             if ($key == 'deploymentPath') {
@@ -125,7 +125,8 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         $workflow->removeTask('TYPO3\\Surf\\Task\\Package\\GitTask'); // we add this later on again
 
         // -----------------------------------------------
-        // Step 1: initialize - This is normally used only for an initial deployment to an instance. At this stage you may prefill certain directories for example.
+        // Step 1: initialize - This is normally used only for an initial deployment to an instance.
+        // At this stage you may prefill certain directories for example.
 
         // -----------------------------------------------
         // Step 2: package - This stage is where you normally package all files and assets, which will be transferred to the next stage.
@@ -136,7 +137,6 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         $workflow->afterTask('TYPO3\\Surf\\Task\\Package\\GitTask', 'Madj2k\\Surf\\Task\\Local\\CopyHtaccess');
         $workflow->afterTask('TYPO3\\Surf\\Task\\Package\\GitTask', 'Madj2k\\Surf\\Task\\Local\\CopyAdditionalConfiguration');
         $workflow->afterTask('TYPO3\\Surf\\Task\\Package\\GitTask', 'Madj2k\\Surf\\Task\\Local\\FixRights');
-
         $workflow->afterTask('Madj2k\\Surf\\Task\\Local\\FixRights', 'Madj2k\\Surf\\Task\\Local\\SetGitFileModeIgnore');
 
         // -----------------------------------------------
@@ -198,17 +198,30 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         $workflow->defineTask(
             'Madj2k\\Surf\\Task\\Local\\FixRights',
             \TYPO3\Surf\Task\LocalShellTask::class,
-            ['command' => 'cd {workspacePath} && chmod -R 770 ./ && echo "Fixed rights in {workspacePath}"']
+            [
+                'command' =>
+                    'cd {workspacePath}'
+                    . ' && chmod -R 770 ./'
+                    . ' && echo "Fixed rights in {workspacePath}"'
+            ]
         );
+
         $workflow->defineTask(
             'Madj2k\\Surf\\Task\\Local\\SetGitFileModeIgnore',
             \TYPO3\Surf\Task\LocalShellTask::class,
-            ['command' => 'cd {workspacePath} && ./scripts/git-filemode-recursive.sh && echo "Set \'git config core.filemode false\' on all repositories in {workspacePath}"']
+            [
+                'command' =>
+                    'cd {workspacePath} '
+                    . ' && find ./ -type d -name ".git" | while read dir ; do sh -c "cd $dir/../ && git config core.filemode false"; done'
+                    . ' && echo "Set \'git config core.filemode false\' on all repositories in {workspacePath}"'
+            ]
         );
+
         $workflow->defineTask(
             'Madj2k\\Surf\\Task\\Local\\CopyEnv',
             \TYPO3\Surf\Task\LocalShellTask::class,
-            ['command' => 'cd {workspacePath} && if [ -f "_.env.' . $this->getOption('fileExtension') . '" ]; then cp _.env.' . $this->getOption('fileExtension') . ' .env; fi']
+            [
+                'command' => 'cd {workspacePath} && if [ -f "_.env.' . $this->getOption('fileExtension') . '" ]; then cp _.env.' . $this->getOption('fileExtension') . ' .env; fi']
         );
         $workflow->defineTask(
             'Madj2k\\Surf\\Task\\Local\\CopyAdditionalConfiguration',
@@ -258,11 +271,11 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
             \TYPO3\Surf\Task\ShellTask::class,
             ['command' => 'cd {releasePath} && find ./web -type f -exec chmod 640 {} \; && find ./web -type d -exec chmod 750 {} \; && echo "Fixed rights in {releasePath}"']
         );
-        $workflow->defineTask(
-            'Madj2k\\Surf\\Task\\Remote\\ClearOpcCache',
-            \TYPO3\Surf\Task\ShellTask::class,
-            ['command' => 'cd {releasePath} && ' . $this->getOption('phpBinaryPathAndFilename') . ' ./clear-opc-cache.php']
-        );
+$workflow->defineTask(
+    'Madj2k\\Surf\\Task\\Remote\\ClearOpcCache',
+    \TYPO3\Surf\Task\ShellTask::class,
+    ['command' => 'cd {releasePath} && ' . $this->getOption('phpBinaryPathAndFilename') . ' ./clear-opc-cache.php']
+);
         $workflow->defineTask(
             'Madj2k\\Surf\\Task\\Remote\\TYPO3\\FixFolderStructure',
             \TYPO3\Surf\Task\ShellTask::class,
