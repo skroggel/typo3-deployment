@@ -133,8 +133,8 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         // At this stage you may prefill certain directories for example.
 
         // -----------------------------------------------
-        // Step 2: lock 
-        
+        // Step 2: lock
+
         // -----------------------------------------------
         // Step 3: package - This stage is where you normally package all files and assets, which will be transferred to the next stage.
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyEnvTask', 'package');
@@ -182,7 +182,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         // -----------------------------------------------
         // Step 11: unlock
         $workflow->addTask('Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\UnlockForEditorsTask', 'unlock');
-        $workflow->afterStage('unlock', 'Madj2k\\Surf\\Task\\Remote\\EmailNotification');
+        $workflow->afterStage('unlock', 'Madj2k\\Surf\\Task\\Remote\\NotifyTask');
 
     }
 

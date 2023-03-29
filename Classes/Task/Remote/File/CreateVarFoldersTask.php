@@ -41,13 +41,13 @@ class CreateVarFoldersTask extends ShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
+        $webDir = escapeshellarg(($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : ''));
         $options['command'] = 'cd {releasePath}' .
-            ' && if [ ! -d "./' . $webDir . 'typo3temp/" ]; then' . 
-                ' mkdir ./' . $webDir . 'typo3temp;' . 
-            ' fi' . 
-            ' && if [ ! -d "./' . $webDir . 'typo3temp/var" ]; then' . 
-                ' mkdir ./' . $webDir . 'typo3temp/var;' . 
+            ' && if [ ! -d "./' . $webDir . 'typo3temp/" ]; then' .
+                ' mkdir ./' . $webDir . 'typo3temp;' .
+            ' fi' .
+            ' && if [ ! -d "./' . $webDir . 'typo3temp/var" ]; then' .
+                ' mkdir ./' . $webDir . 'typo3temp/var;' .
             ' fi' .
             ' && if [ ! -d "./var/" ]; then' .
                 ' mkdir ./var;' .

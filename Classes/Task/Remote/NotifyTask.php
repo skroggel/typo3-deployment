@@ -41,12 +41,18 @@ class NotifyTask extends ShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
-        $options['command'] = 'cd {releasePath}' .
-            ' && if [ -f "./' . $webDir . 'changelog" ]; then' .
+        $webDir = escapeshellarg(($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : ''));
+        if (file_exists($deployment->getApplicationReleasePath($application) .'/' . $webdir . 'changelog')) {
+            $options['command'] = 'cd {releasePath}' .
+                ' && if [ -f "./' . $webDir . 'changelog" ]; then' .
                 ' mail -s "A new release is online now! (branch ' . escapeshellarg($this->getOption('branch')) . ')" '
-                    . escapeshellarg($this->getOption('adminMail')) . ' < ./' . $webDir . 'changelog;' .
-            ' fi';
+                . escapeshellarg($this->getOption('adminMail')) . ' < ./' . $webDir . 'changelog;' .
+                ' fi';
+        } else {
+            $options['command'] = 'cd {releasePath}' .
+                ' mail -s "A new release is online now! (branch ' . escapeshellarg($this->getOption('branch')) . ')" '
+                . escapeshellarg($this->getOption('adminMail'));
+        }
 
         parent::execute($node, $application, $deployment, $options);
     }

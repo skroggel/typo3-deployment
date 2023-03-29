@@ -41,15 +41,15 @@ class CopyHtaccessTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
+        $webDir = escapeshellarg(($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : ''));
         $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
         $options['command'] =  'cd {workspacePath}' .
-            ' && if [ -f "./' . $webDir . '_.htaccess.' . $fileExtension . '" ]; then' . 
-                ' cp ./' . $webDir . '_.htaccess.' . $fileExtension . ' ./' . $webDir . '.htaccess;' . 
-            ' fi' . 
+            ' && if [ -f "./' . $webDir . '_.htaccess.' . $fileExtension . '" ]; then' .
+                ' cp ./' . $webDir . '_.htaccess.' . $fileExtension . ' ./' . $webDir . '.htaccess;' .
+            ' fi' .
             ' && if [ -f "./' . $webDir . '_.htpasswd.' . $fileExtension . '" ]; then' .
-                ' cp ./' . $webDir . '_.htpasswd.' . $fileExtension . ' ./' . $webDir . '.htpasswd;' . 
-            ' fi' . 
+                ' cp ./' . $webDir . '_.htpasswd.' . $fileExtension . ' ./' . $webDir . '.htpasswd;' .
+            ' fi' .
             ' && echo "Copied .htaccess in {workspacePath}/' . $webDir . '.";';
 
         parent::execute($node, $application, $deployment, $options);

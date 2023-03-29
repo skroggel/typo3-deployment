@@ -41,13 +41,13 @@ class CopyDummyFilesTask extends ShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = ($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : '');
+        $webDir = escapeshellarg(($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : ''));
         $options['command'] = 'cd {releasePath}' .
-            ' && if [ -d "./dummy" ] && [ -d "./' . $webDir . 'fileadmin/" ]; then' . 
-                ' if [ ! -d "./' . $webDir . 'fileadmin/media" ]; then' . 
+            ' && if [ -d "./dummy" ] && [ -d "./' . $webDir . 'fileadmin/" ]; then' .
+                ' if [ ! -d "./' . $webDir . 'fileadmin/media" ]; then' .
                     ' mkdir ./' . $webDir . 'fileadmin/media;' .
-                ' fi' . 
-                ' && cp ./dummy/* ./' . $webDir . 'fileadmin/media/' . 
+                ' fi' .
+                ' && cp ./dummy/* ./' . $webDir . 'fileadmin/media/' .
                 ' && echo "Copied dummy files in {releasePath}/' . $webDir . '.";' .
             ' fi';
 

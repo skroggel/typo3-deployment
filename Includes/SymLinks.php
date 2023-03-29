@@ -14,6 +14,7 @@ return [
     './web/typo3temp/logs' => '../../../../shared/Data/logs', // deprecated path
     './web/typo3temp/var/logs' => '../../../../../shared/Data/logs', // deprecated path
     './var/logs' => '../../../shared/Data/logs',
+    './var/labels' => '../../../shared/Data/labels',
     './web/typo3temp/assets' => '../../../../shared/Data/assets',
     './web/typo3conf/LocalConfiguration.php' => '../../../../shared/LocalConfiguration.php'
 ];

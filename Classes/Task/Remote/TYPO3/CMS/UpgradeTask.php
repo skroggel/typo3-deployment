@@ -62,7 +62,7 @@ class UpgradeTask extends AbstractCliTask
             $application,
             $deployment,
             $options
-        );        
+        );
 
         $cliArguments = $this->getCliArgumentsForDatabaseUpdateBefore($node, $application, $deployment, $options);
         $this->executeCliCommand(
@@ -90,6 +90,16 @@ class UpgradeTask extends AbstractCliTask
             $deployment,
             $options
         );
+
+        $cliArguments = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
+        $this->executeCliCommand(
+            $cliArguments,
+            $node,
+            $application,
+            $deployment,
+            $options
+        );
+
 
         $cliArguments = $this->getCliArgumentsForDatabaseUpdateAfter($node, $application, $deployment, $options);
         $this->executeCliCommand(
@@ -153,7 +163,7 @@ class UpgradeTask extends AbstractCliTask
         return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode];
     }
 
-    
+
     /**
      * @param Node $node
      * @param CMS $application

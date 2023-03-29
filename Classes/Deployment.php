@@ -71,6 +71,7 @@ class Deployment
             false,
             '/^(y|j)/i'
         );
+        
         $helper = new QuestionHelper;
         $input = new ArgvInput;
         $output = new StreamOutput(fopen('php://stdout', 'w'));
