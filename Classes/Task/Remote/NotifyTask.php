@@ -42,17 +42,14 @@ class NotifyTask extends ShellTask
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
         $webDir = ($options['webDirectory']? trim($options['webDirectory'], '\\/') .'/' : '');
-        if (file_exists($deployment->getApplicationReleasePath($application) .'/' . $webDir . 'changelog')) {
-            $options['command'] = 'cd {releasePath}' .
-                ' && if [ -f ' . escapeshellarg('./' . $webDir . 'changelog') . ' ]; then' .
+        $options['command'] = 'cd {releasePath}' .
+            ' && if [ -f ' . escapeshellarg('./' . $webDir . 'changelog') . ' ]; then' .
                 ' mail -s "A new release is online now! (branch ' . escapeshellarg($options['branch']) . ')" '
                 . escapeshellarg($options['adminMail']) . ' < ' . escapeshellarg('./' . $webDir . 'changelog') .';' .
-                ' fi';
-        } else {
-            $options['command'] = 'cd {releasePath}' .
+            ' else ' .
                 ' mail -s "A new release is online now! (branch ' . escapeshellarg($options['branch']) . ')" '
                 . escapeshellarg($options['adminMail']);
-        }
+            ' fi';
 
         parent::execute($node, $application, $deployment, $options);
     }
