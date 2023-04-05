@@ -48,7 +48,7 @@ class NotifyTask extends ShellTask
                 . escapeshellarg($options['adminMail']) . ' < ' . escapeshellarg('./' . $webDir . 'changelog') .';' .
             ' else ' .
                 ' mail -s "A new release is online now! (branch ' . escapeshellarg($options['branch']) . ')" '
-                . escapeshellarg($options['adminMail']);
+                . escapeshellarg($options['adminMail']) .';' .
             ' fi';
 
         parent::execute($node, $application, $deployment, $options);
