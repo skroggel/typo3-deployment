@@ -38,7 +38,7 @@ class Deployment
      * @var array
      */
     protected $options = array(
-        'workspacesBasePath' => '/tmp/surf'
+        'workspacesBasePath' => '/tmp/surf',
     );
 
 
@@ -66,18 +66,37 @@ class Deployment
 
         // security question
         $question = new ConfirmationQuestion(
-            'Continue with deployment of branch [' . $options['branch']
-            . '] on server [' . $options['hostname'] . "]?\n(y|n) ",
+            'Continue with deployment of branch [' . $options['branch'] . ']'.
+            ' on server [' . $options['hostname'] . "]?\n(y|n) ",
             false,
             '/^(y|j)/i'
         );
-        
+
         $helper = new QuestionHelper;
         $input = new ArgvInput;
         $output = new StreamOutput(fopen('php://stdout', 'w'));
 
         if (!$helper->ask($input, $output, $question)) {
             exit;
+        }
+
+        // security question number two
+        if ($options['doUpgrade']) {
+
+            $question = new ConfirmationQuestion(
+                'Are you really sure you want to upgrade the target on server'.
+                ' [' . $options['hostname'] . "]?\n(y|n) ",
+                false,
+                '/^(y|j)/i'
+            );
+
+            $helper = new QuestionHelper;
+            $input = new ArgvInput;
+            $output = new StreamOutput(fopen('php://stdout', 'w'));
+
+            if (!$helper->ask($input, $output, $question)) {
+                exit;
+            }
         }
 
         $application = new Application();

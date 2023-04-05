@@ -67,9 +67,9 @@ class UnlockForEditorsTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getSuitableCliArguments(Node $node, CMS $application, Deployment $deployment, array $options = [])
+    protected function getSuitableCliArguments(Node $node, CMS $application, Deployment $deployment, array $options = []): array
     {
         return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'backend:unlockforeditors'];
-    }    
+    }
 
 }

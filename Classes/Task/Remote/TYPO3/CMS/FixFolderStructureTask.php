@@ -30,7 +30,7 @@ use TYPO3\Surf\Domain\Model\Node;
  */
 class FixFolderStructureTask extends AbstractCliTask
 {
-    
+
     /**
      * Execute this task
      *
@@ -60,7 +60,7 @@ class FixFolderStructureTask extends AbstractCliTask
         );
     }
 
-    
+
     /**
      * @param Node $node
      * @param CMS $application
@@ -68,7 +68,7 @@ class FixFolderStructureTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getSuitableCliArguments(Node $node, CMS $application, Deployment $deployment, array $options = [])
+    protected function getSuitableCliArguments(Node $node, CMS $application, Deployment $deployment, array $options = []): array
     {
         return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'install:fixfolderstructure'];
     }

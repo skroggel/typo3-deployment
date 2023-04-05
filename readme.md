@@ -54,7 +54,7 @@ AFTER:
 ## Stage 6: migrate
 Migrate (Doctrine, custom)
 1. ~~TYPO3\Surf\Task\TYPO3\CMS\SetUpExtensionsTask~~
-2. Madj2k\Surf\Task\Remote\TYPO3\UpdateSchema
+2. TYPO3\Surf\Task\TYPO3\CMS\CompareDatabaseTask
 
 ## Stage 7: finalize
 Prepare final release (e.g. warmup)
@@ -153,6 +153,7 @@ Example:
  * @version 1.0.3
  */
 return [
+    'context' => 'Production/Staging',
     'projectName' => 'Example',
     'deploymentPath' => '/var/www/example.com/surf',
     'phpBinaryPathAndFilename' => '/usr/bin/php7.4',
@@ -170,8 +171,8 @@ return [
     'queryFileAfterUpgrade' => ''
 ];
 ```
-## File: _.htaccess.dev / _.htaccess.prod / _.htaccess.stage
-Contains the settings for the given environment.
+## File: _.htaccess.dev / _.htaccess.prod / _.htaccess.stage / config.nginx.dev / config.nginx.prod / config.nginx.stage
+Contains the settings for the given environment. You can use .htaccess for Apache or config.nginx for Nginx.
 Will be deployed automatically.
 
 ## File: _.htpasswd.dev / _.htpasswd.prod / _.htpasswd.stage
@@ -247,8 +248,23 @@ vm$ php ./vendor/typo3/surf/surf deploy Staging -vvv
 ```
 
 # Important hints
+* Make sure PHP APCU is installed
+ ```
+apt-get install php7.4-apc php7.4-apcu
+ ```
+## When running with doUpgrade
 * Before running the deployment with `doUpgrade = true` make sure your MySQL-user has the right privileges to execute a mysldump:
  ```
 GRANT RELOAD, PROCESS ON *.* TO 'my-user'@'%';
 FLUSH PRIVILEGES;
+ ```
+* If you have an external server to access, you need to at least install mysql-client
+ ```
+apt-get mysql-client
+ ```
+* If you are trying to access an older MySQL-version via MySQL-Client v8+, you should add this line
+in your `/etc/mysql/my.cnf`
+```
+[mysqldump]
+column-statistics=0
  ```

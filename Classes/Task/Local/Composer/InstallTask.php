@@ -19,14 +19,14 @@ use TYPO3\Surf\Domain\Model\Deployment;
 use TYPO3\Surf\Domain\Model\Node;
 
 /**
- * Class InstallProductionTask
+ * Class InstallTask
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
  * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class InstallProductionTask extends LocalShellTask
+class InstallTask extends LocalShellTask
 {
 
     /**
@@ -44,9 +44,9 @@ class InstallProductionTask extends LocalShellTask
 
         // own task because we need --prefer-dist
         // we do NOT set no-scripts, because when using no-scripts the TYPO3 console won't work
-        $options['command'] =  'cd {workspacePath}' . 
-            ' && export TYPO3_DEPLOYMENT_RUN="1"' . 
-            ' && composer install --no-ansi --no-interaction --no-dev --no-progress --classmap-authoritative --prefer-dist 2>&1' . 
+        $options['command'] =  'cd {workspacePath}' .
+            ' && export TYPO3_DEPLOYMENT_RUN="1"' .
+            ' && composer install --no-ansi --no-interaction --no-dev --no-progress --classmap-authoritative --prefer-dist 2>&1' .
             ' && export TYPO3_DEPLOYMENT_RUN="0"';
 
         parent::execute($node, $application, $deployment, $options);

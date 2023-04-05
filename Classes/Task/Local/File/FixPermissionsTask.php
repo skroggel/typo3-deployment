@@ -42,7 +42,7 @@ class FixPermissionsTask extends LocalShellTask
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
         $options['command'] =  'cd {workspacePath}'
-            . ' && chmod -R 770 ./'
+            . ' && chmod -R 777 ./'
             . ' && echo "Fixed rights in {workspacePath}"';
 
         parent::execute($node, $application, $deployment, $options);

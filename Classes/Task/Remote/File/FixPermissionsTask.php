@@ -42,8 +42,8 @@ class FixPermissionsTask extends ShellTask
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
         $options['command'] =  'cd {releasePath}' .
-            ' && find ./web -type f -exec chmod 640 {} \;' .
-            ' && find ./web -type d -exec chmod 750 {} \;' .
+            ' && find ./web -type f -exec chmod 644 {} \;' .
+            ' && find ./web -type d -exec chmod 755 {} \;' .
             ' && echo "Fixed rights in {releasePath}""';
 
         parent::execute($node, $application, $deployment, $options);

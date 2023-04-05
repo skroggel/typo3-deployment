@@ -55,60 +55,87 @@ class UpgradeTask extends AbstractCliTask
             return;
         }
 
-        $cliArguments = $this->getCliArgumentsForDatabaseDump($node, $application, $deployment, $options);
-        $this->executeCliCommand(
-            $cliArguments,
-            $node,
-            $application,
-            $deployment,
-            $options
-        );
-
-        $cliArguments = $this->getCliArgumentsForDatabaseUpdateBefore($node, $application, $deployment, $options);
-        $this->executeCliCommand(
-            $cliArguments,
-            $node,
-            $application,
-            $deployment,
-            $options
-        );
-
-        $cliArguments = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
-        $this->executeCliCommand(
-            $cliArguments,
-            $node,
-            $application,
-            $deployment,
-            $options
-        );
-
-        $cliArguments = $this->getCliArgumentsForUpgrade($node, $application, $deployment, $options);
-        $this->executeCliCommand(
-            $cliArguments,
-            $node,
-            $application,
-            $deployment,
-            $options
-        );
-
-        $cliArguments = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
-        $this->executeCliCommand(
-            $cliArguments,
-            $node,
-            $application,
-            $deployment,
-            $options
-        );
+        $command = $this->getCliArgumentsForDatabaseDump($node, $application, $deployment, $options);
+        if ($command['cliArguments']) {
+            $this->executeCliCommand(
+                $command['cliArguments'],
+                $node,
+                $application,
+                $deployment,
+                $options,
+                $command['preCommand'],
+                $command['postCommand']
+            );
+        }
 
 
-        $cliArguments = $this->getCliArgumentsForDatabaseUpdateAfter($node, $application, $deployment, $options);
-        $this->executeCliCommand(
-            $cliArguments,
-            $node,
-            $application,
-            $deployment,
-            $options
-        );
+        $command = $this->getCliArgumentsForDatabaseUpdateBefore($node, $application, $deployment, $options);
+        if ($command['cliArguments']) {
+            $this->executeCliCommand(
+                $command['cliArguments'],
+                $node,
+                $application,
+                $deployment,
+                $options,
+                $command['preCommand'],
+                $command['postCommand']
+            );
+        }
+
+        $command = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
+        if ($command['cliArguments']) {
+            $this->executeCliCommand(
+                $command['cliArguments'],
+                $node,
+                $application,
+                $deployment,
+                $options,
+                $command['preCommand'],
+                $command['postCommand']
+            );
+        }
+
+        $allWizards = $this->getCombinedWizardListWithArguments($options);
+        foreach ($allWizards as $wizard => $wizardArguments) {
+            $command = $this->getCliArgumentsForUpgradeWizard($node, $application, $deployment, $wizard, $wizardArguments, $options);
+            if ($command['cliArguments']) {
+                $this->executeCliCommand(
+                    $command['cliArguments'],
+                    $node,
+                    $application,
+                    $deployment,
+                    $options,
+                    $command['preCommand'],
+                    $command['postCommand']
+                );
+            }
+        }
+
+        $command = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
+        if ($command['cliArguments']) {
+            $this->executeCliCommand(
+                $command['cliArguments'],
+                $node,
+                $application,
+                $deployment,
+                $options,
+                $command['preCommand'],
+                $command['postCommand']
+            );
+        }
+
+        $command = $this->getCliArgumentsForDatabaseUpdateAfter($node, $application, $deployment, $options);
+        if ($command['cliArguments']) {
+            $this->executeCliCommand(
+                $command['cliArguments'],
+                $node,
+                $application,
+                $deployment,
+                $options,
+                $command['preCommand'],
+                $command['postCommand']
+            );
+        }
     }
 
 
@@ -119,15 +146,30 @@ class UpgradeTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getCliArgumentsForDatabaseUpdateBefore(Node $node, CMS $application, Deployment $deployment, array $options = [])
-    {
+    protected function getCliArgumentsForDatabaseUpdateBefore(
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        array $options = []
+    ): array {
+
         if (
             ($options['queryFileBeforeUpgrade'])
             && (file_exists($options['queryFileBeforeUpgrade']))
             && ($content = file_get_contents($options['queryFileBeforeUpgrade']))
         ) {
-            return ['echo', escapeshellarg($content), '|', $this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'];
+            return [
+                'preCommand' => 'echo ' . escapeshellarg($content).  ' | ',
+                'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'],
+                'postCommand' => ''
+            ];
         }
+
+        return [
+            'preCommand' => '',
+            'cliArguments' => [],
+            'postCommand' => ''
+        ];
     }
 
 
@@ -138,15 +180,30 @@ class UpgradeTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getCliArgumentsForDatabaseUpdateAfter(Node $node, CMS $application, Deployment $deployment, array $options = [])
-    {
+    protected function getCliArgumentsForDatabaseUpdateAfter(
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        array $options = []
+    ): array {
+
         if (
             ($options['queryFileAfterUpgrade'])
             && (file_exists($options['queryFileAfterUpgrade']))
             && ($content = file_get_contents($options['queryFileAfterUpgrade']))
         ) {
-            return ['echo', escapeshellarg($content), '|', $this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'];
+            return [
+                'preCommand' => 'echo ' . escapeshellarg($content).  ' | ',
+                'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'],
+                'postCommand' => ''
+            ];
         }
+
+        return [
+            'preCommand' => '',
+            'cliArguments' => [],
+            'postCommand' => ''
+        ];
     }
 
 
@@ -157,10 +214,19 @@ class UpgradeTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getCliArgumentsForCompareDatabase(Node $node, CMS $application, Deployment $deployment, array $options = [])
-    {
+    protected function getCliArgumentsForCompareDatabase(
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        array $options = []
+    ): array {
+
         $databaseCompareMode = $options['databaseCompareMode'] ?? '*.add,*.change';
-        return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode];
+        return [
+            'preCommand' => '',
+            'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
+            'postCommand' => ''
+        ];
     }
 
 
@@ -171,9 +237,36 @@ class UpgradeTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getCliArgumentsForDatabaseDump(Node $node, CMS $application, Deployment $deployment, array $options = [])
-    {
-        return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:export', '>', $deployment->getApplicationReleasePath($application) .'/' . time() . '-dump.sql'];
+    protected function getCliArgumentsForDatabaseDump(
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        array $options = []
+    ): array {
+
+        if (
+            (
+                ($options['queryFileBeforeUpgrade'])
+                && (file_exists($options['queryFileBeforeUpgrade']))
+                && ($content = file_get_contents($options['queryFileBeforeUpgrade']))
+            ) || (
+                ($options['queryFileAfterUpgrade'])
+                && (file_exists($options['queryFileAfterUpgrade']))
+                && ($content = file_get_contents($options['queryFileAfterUpgrade']))
+             )
+        ) {
+            return [
+                'preCommand' => '',
+                'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:export'],
+                'postCommand' => ' > ' . escapeshellarg($deployment->getApplicationReleasePath($application) . '/' . time() . '-dump.sql')
+            ];
+        }
+
+        return [
+            'preCommand' => '',
+            'cliArguments' => [],
+            'postCommand' => ''
+        ];
     }
 
 
@@ -181,13 +274,103 @@ class UpgradeTask extends AbstractCliTask
      * @param Node $node
      * @param CMS $application
      * @param Deployment $deployment
+     * @param string $wizard
+     * @return array
+     */
+    protected function getCliArgumentsForUpgradeWizard(
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        string $wizard,
+        string $wizardArguments,
+        array $options = []
+    ): array {
+
+        return [
+            'preCommand' => '',
+            'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'upgrade:wizard', $wizard, $wizardArguments],
+            'postCommand' => ''
+        ];
+    }
+
+
+    /**
      * @param array $options
      * @return array
      */
-    protected function getCliArgumentsForUpgrade(Node $node, CMS $application, Deployment $deployment, array $options = [])
+    protected function getCombinedWizardListWithArguments (array $options = []): array
     {
-        $additionalParamsUpgrade = $options['additionalParamsUpgrade'] ?? '--deny typo3DbLegacyExtension --deny funcExtension --deny rdctExtension --deny redirects --deny adminpanelExtension --deny argon2iPasswordHashes';
-        return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'upgrade:run all', '--no-interaction', '--confirm all', $additionalParamsUpgrade];
+        $allWizards = [
+            'formFileExtension','extensionManagerTables','wizardDoneToRegistry','startModuleUpdate',
+            'frontendUserImageUpdateWizard','databaseRowsUpdateWizard','commandLineBackendUserRemovalUpdate',
+            'fillTranslationSourceField','sectionFrameToFrameClassUpdate','splitMenusUpdate',
+            'bulletContentElementUpdate','uploadContentElementUpdate','migrateFscStaticTemplateUpdate',
+            'fileReferenceUpdate','migrateFeSessionDataUpdate','compatibility7Extension',
+            'formLegacyExtractionUpdate','rtehtmlareaExtension','sysLanguageSorting','typo3DbLegacyExtension',
+            'funcExtension','pagesUrltypeField','separateSysHistoryFromLog','rdctExtension',
+            'cshmanualBackendUsers','pagesLanguageOverlay','pagesLanguageOverlayBeGroupsAccessRights',
+            'backendLayoutIcons','redirects','adminpanelExtension','pagesSlugs','argon2iPasswordHashes',
+            'backendUsersConfiguration','svgFilesSanitization','masiMigrateRealUrlExclude','seoTitleUpdate',
+            'canonicalFieldUpdate'
+        ];
+
+        if (! $options['excludeWizards']) {
+            $options['excludeWizards'] = 'rtehtmlareaExtension, funcExtension,typo3DbLegacyExtension,rdctExtension,' .
+                'compatibility7Extension,redirects,adminpanelExtension,argon2iPasswordHashes';
+        }
+        $excludeWizards = explode(',', preg_replace("/\s/", '',$options['excludeWizards']));
+
+        $wizardList = [];
+        foreach ($allWizards as $wizard) {
+
+            $params = '-a ' . $wizard . '[install]=1';
+            if (in_array($wizard, $excludeWizards )) {
+                $params = '-a ' . $wizard . '[install]=0';
+            }
+
+            $wizardList[$wizard] = $params;
+        }
+
+        return $wizardList;
+    }
+
+
+    /**
+     * Execute this task
+     *
+     * @param array $cliArguments
+     * @param \TYPO3\Surf\Domain\Model\Node $node
+     * @param CMS $application
+     * @param \TYPO3\Surf\Domain\Model\Deployment $deployment
+     * @param array $options
+     * @return bool|mixed
+     */
+    protected function executeCliCommand(
+        array $cliArguments,
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        array $options = [],
+        string $preCommand = '',
+        string $postCommand = ''
+    ) {
+
+        $this->determineWorkingDirectoryAndTargetNode($node, $application, $deployment, $options);
+        $phpBinaryPathAndFilename = $options['phpBinaryPathAndFilename'] ?? 'php';
+        $commandPrefix = '';
+        if (isset($options['context'])) {
+            $commandPrefix = 'TYPO3_CONTEXT=' . escapeshellarg($options['context']) . ' ';
+        }
+        $commandPrefix .= $phpBinaryPathAndFilename . ' ';
+
+        $this->determineWorkingDirectoryAndTargetNode($node, $application, $deployment, $options);
+
+        $commands = ['cd ' . escapeshellarg($this->workingDirectory)];
+        $commands[] = ($preCommand ? $preCommand . ' ': '')
+            . $commandPrefix . implode(' ', array_map('escapeshellarg', $cliArguments))
+            . ($postCommand ? $postCommand . ' ': '');
+
+        return $this->shell->executeOrSimulate($commands, $this->targetNode, $deployment);
     }
 
 }

@@ -25,6 +25,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
 
         parent::__construct($name);
         $this->options = array_merge($this->options, array(
+            'context' => 'Production/Staging',
             'projectName' => '',
             'repositoryUrl' => '',
             'packageMethod' => 'git',
@@ -37,12 +38,11 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
             'lockDeployment' => true,
             'applicationRootDirectory' => 'src',
             'deploymentPath' => '',
-            'context' => 'Production',
             'scriptFileName' => 'vendor/bin/typo3cms',
             'webDirectory' => 'web',
             'adminMail' => 'deployment@steffenkroggel.de',
             'doUpgrade' => false,
-            'additionalParamsUpgrade' => '',
+            'excludeWizards' => '',
             'queryFileBeforeUpgrade' => '',
             'queryFileAfterUpgrade' => '',
         ));
@@ -95,12 +95,12 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         }
 
         // set file extension based on branch
-        if ($branch = $this->getOption('branch')) {
+        if ($context = strtolower($this->getOption('context'))) {
 
             $this->setOption('fileExtension', 'dev');
-            if ($branch == 'staging') {
+            if (strpos($context,'staging') !== false) {
                 $this->setOption('fileExtension', 'stage');
-            } else if ($branch == 'production') {
+            } else if (strpos($context,'production') !== false) {
                 $this->setOption('fileExtension', 'prod');
             }
         }
@@ -124,9 +124,10 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
 
         // remove tasks we don't need or we want to handle ourselves!
         $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CopyConfigurationTask'); // is deprecated
+        $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CreatePackageStatesTask'); // is deprecated
         $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\SetUpExtensionsTask'); // not needed, throws exceptions
         $workflow->removeTask('TYPO3\\Surf\\DefinedTask\\Composer\\LocalInstallTask'); // we use an own task for that
-        // $workflow->removeTask('TYPO3\\Surf\\Task\\Package\\GitTask'); // we add this later on again
+        $workflow->removeTask('TYPO3\\Surf\\Task\\Package\\GitTask'); // we add this later on again
 
         // -----------------------------------------------
         // Step 1: initialize - This is normally used only for an initial deployment to an instance.
@@ -137,33 +138,35 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
 
         // -----------------------------------------------
         // Step 3: package - This stage is where you normally package all files and assets, which will be transferred to the next stage.
+        $workflow->addTask('TYPO3\\Surf\\Task\\Package\\GitTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyEnvTask', 'package');
-        $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyHtaccessTask', 'package');
+        $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyServerConfigurationTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyAdditionalConfigurationTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\FixPermissionsTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\Git\\SetFileModeIgnoreTask', 'package');
-        $workflow->addTask('Madj2k\\Surf\\Task\\Local\\Composer\\Install' . ucfirst($this->getOption('branch')) . 'Task', 'package');
+        $workflow->addTask('Madj2k\\Surf\\Task\\Local\\Composer\\InstallTask', 'package');
 
         // -----------------------------------------------
         // Step 4: transfer - Here all tasks are located which serve to transfer the assets from your local computer to the node, where the application runs.
         $workflow->beforeTask('TYPO3\\Surf\\Task\\Generic\\CreateSymlinksTask', 'Madj2k\\Surf\\Task\\Remote\\File\\CreateVarFoldersTask');
+        $workflow->afterTask('TYPO3\\Surf\\Task\\Generic\\CreateSymlinksTask', 'Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\CreatePackageStatesTask');
 
         // -----------------------------------------------
         // Step 5: update - If necessary, the transferred assets can be updated at this stage on the foreign instance.
         // Be careful and do not delete old tables or columns, because the old code, relying on these, is still live.
-        $workflow->beforeStage('Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\LockForEditorsTask', 'update');
-        $workflow->addTask('Madj2k\\Surf\\Task\\Remote\\CMS\\UpgradeTask', 'update');
+        $workflow->addTask('Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\LockForEditorsTask', 'update');
+        $workflow->addTask('Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\UpgradeTask', 'update');
 
         // -----------------------------------------------
         // Step 6: migration - Here you can define tasks to do some database updates / migrations.
         // Be careful and do not delete old tables or columns, because the old code, relying on these, is still live.
-        $workflow->addTask('Madj2k\\Surf\\Task\\Remote\\TYPO3\\UpdateSchema', 'migrate');
+        $workflow->addTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CompareDatabaseTask', 'migrate');
 
         // -----------------------------------------------
         // Step 7: finalize - This stage is meant for tasks, that should be done short before going live, like cache warm ups and so on.
         $workflow->addTask( 'Madj2k\\Surf\\Task\\Remote\\File\\FixPermissionsTask', 'finalize');
         $workflow->addTask('Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\FixFolderStructureTask', 'finalize');
-        if ($this->getOption('branch') != 'production') {
+        if (strtolower($this->getOption('context')) != 'production') {
             $workflow->afterStage('finalize', 'Madj2k\\Surf\\Task\\Remote\\File\\CopyDummyFilesTask');
         }
 

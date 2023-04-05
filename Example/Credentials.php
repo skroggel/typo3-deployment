@@ -8,6 +8,7 @@
  * @version 1.0.3
  */
 return [
+    'context' => 'Production/Staging',
     'projectName' => 'Example',
     'deploymentPath' => '/var/www/example.com/surf',
     'phpBinaryPathAndFilename' => '/usr/bin/php7.4',
@@ -20,7 +21,7 @@ return [
 
     'repositoryUrl' => 'https://github.com/Test/Example.git',
     'branch' => 'staging',
-    
+
     'doUpgrade' => false,
     'queryFileBeforeUpgrade' => '',
     'queryFileAfterUpgrade' => ''

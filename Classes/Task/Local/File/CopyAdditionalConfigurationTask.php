@@ -41,14 +41,14 @@ class CopyAdditionalConfigurationTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = escapeshellarg(($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : ''));
-        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
+        $webDir = ($options['webDirectory']? trim($options['webDirectory'], '\\/') .'/' : '');
+        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $options['fileExtension']);
         $options['command'] = 'cd {workspacePath}' .
-         ' && if [ -f "./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $fileExtension . '.php" ]; then' .
-                ' cp ./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $fileExtension . '.php' .
-                    ' ./' . $webDir . 'typo3conf/AdditionalConfiguration.php;' .
+         ' && if [ -f '. escapeshellarg('./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $fileExtension . '.php') .' ]; then' .
+                ' cp ' . escapeshellarg('./' . $webDir . 'typo3conf/AdditionalConfiguration.' . $fileExtension . '.php') .
+                    ' ' . escapeshellarg('./' . $webDir . 'typo3conf/AdditionalConfiguration.php') . ';' .
         ' fi' .
-        ' && echo "Copied AdditionalConfiguration.php in {workspacePath}/' . $webDir . '."';
+        ' && echo "Copied AdditionalConfiguration.php ('. $fileExtension . ') into ' . escapeshellarg('{workspacePath}/' . $webDir) . '.";';
 
         parent::execute($node, $application, $deployment, $options);
     }

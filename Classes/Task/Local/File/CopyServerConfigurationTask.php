@@ -19,14 +19,14 @@ use TYPO3\Surf\Domain\Model\Deployment;
 use TYPO3\Surf\Domain\Model\Node;
 
 /**
- * Class CopyHtaccessTask
+ * Class CopyServerConfigurationTask
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Madj2k
  * @package Madj2k_Surf
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class CopyHtaccessTask extends LocalShellTask
+class CopyServerConfigurationTask extends LocalShellTask
 {
 
     /**
@@ -41,16 +41,22 @@ class CopyHtaccessTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $webDir = escapeshellarg(($this->getOption('webDirectory')? trim($options['webDirectory'], '\\/') .'/' : ''));
-        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
+        $webDir = ($options['webDirectory']? trim($options['webDirectory'], '\\/') .'/' : '');
+        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $options['fileExtension']);
         $options['command'] =  'cd {workspacePath}' .
-            ' && if [ -f "./' . $webDir . '_.htaccess.' . $fileExtension . '" ]; then' .
-                ' cp ./' . $webDir . '_.htaccess.' . $fileExtension . ' ./' . $webDir . '.htaccess;' .
+            ' && if [ -f '. escapeshellarg('./' . $webDir . '_.htaccess.' . $fileExtension). ' ]; then' .
+                ' cp ' .  escapeshellarg('./' . $webDir . '_.htaccess.' . $fileExtension) .
+                ' ' .  escapeshellarg('./' . $webDir . '.htaccess') . ';' .
             ' fi' .
-            ' && if [ -f "./' . $webDir . '_.htpasswd.' . $fileExtension . '" ]; then' .
-                ' cp ./' . $webDir . '_.htpasswd.' . $fileExtension . ' ./' . $webDir . '.htpasswd;' .
+            ' && if [ -f ' . escapeshellarg('./' . $webDir . '_.htpasswd.' . $fileExtension ) . ' ]; then' .
+                ' cp ' . escapeshellarg('./' . $webDir . '_.htpasswd.' . $fileExtension)
+                . ' ' . escapeshellarg('./' . $webDir . '.htpasswd') . ';' .
             ' fi' .
-            ' && echo "Copied .htaccess in {workspacePath}/' . $webDir . '.";';
+            ' && if [ -f '. escapeshellarg('./' . $webDir . '_conf.nginx.' . $fileExtension). ' ]; then' .
+            ' cp ' .  escapeshellarg('./' . $webDir . '_conf.nginx.' . $fileExtension) .
+            ' ' .  escapeshellarg('./' . $webDir . 'conf.nginx') . ';' .
+            ' fi' .
+            ' && echo "Copied .htaccess/conf.nginx ('. $fileExtension . ') into ' . escapeshellarg('{workspacePath}/' . $webDir) . '.";';
 
         parent::execute($node, $application, $deployment, $options);
     }

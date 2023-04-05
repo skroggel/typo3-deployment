@@ -41,11 +41,12 @@ class CopyEnvTask extends LocalShellTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $this->getOption('fileExtension'));
+        $fileExtension = preg_replace('/[^a-zA-Z0-9]/', '', $options['fileExtension']);
         $options['command'] =  'cd {workspacePath}' .
-            ' && if [ -f "_.env.' . $fileExtension . '" ];' . 
-                ' then cp _.env.' . $fileExtension . ' .env;'. 
-            ' fi';
+            ' && if [ -f "_.env.' . $fileExtension . '" ];' .
+                ' then cp _.env.' . $fileExtension . ' .env;'.
+            ' fi' .
+            ' && echo "Copied _env ('. $fileExtension . ') into {workspacePath}";';
 
         parent::execute($node, $application, $deployment, $options);
     }
