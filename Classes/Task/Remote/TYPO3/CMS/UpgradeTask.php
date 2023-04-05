@@ -82,7 +82,7 @@ class UpgradeTask extends AbstractCliTask
             );
         }
 
-        $command = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
+        $command = $this->getCliArgumentsForCompareDatabaseBefore($node, $application, $deployment, $options);
         if ($command['cliArguments']) {
             $this->executeCliCommand(
                 $command['cliArguments'],
@@ -111,7 +111,7 @@ class UpgradeTask extends AbstractCliTask
             }
         }
 
-        $command = $this->getCliArgumentsForCompareDatabase($node, $application, $deployment, $options);
+        $command = $this->getCliArgumentsForDatabaseUpdateAfter($node, $application, $deployment, $options);
         if ($command['cliArguments']) {
             $this->executeCliCommand(
                 $command['cliArguments'],
@@ -124,7 +124,7 @@ class UpgradeTask extends AbstractCliTask
             );
         }
 
-        $command = $this->getCliArgumentsForDatabaseUpdateAfter($node, $application, $deployment, $options);
+        $command = $this->getCliArgumentsForCompareDatabaseAfter($node, $application, $deployment, $options);
         if ($command['cliArguments']) {
             $this->executeCliCommand(
                 $command['cliArguments'],
@@ -214,7 +214,7 @@ class UpgradeTask extends AbstractCliTask
      * @param array $options
      * @return array
      */
-    protected function getCliArgumentsForCompareDatabase(
+    protected function getCliArgumentsForCompareDatabaseBefore(
         Node $node,
         CMS $application,
         Deployment $deployment,
@@ -222,6 +222,29 @@ class UpgradeTask extends AbstractCliTask
     ): array {
 
         $databaseCompareMode = $options['databaseCompareMode'] ?? '*.add,*.change';
+        return [
+            'preCommand' => '',
+            'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
+            'postCommand' => ''
+        ];
+    }
+
+
+    /**
+     * @param Node $node
+     * @param CMS $application
+     * @param Deployment $deployment
+     * @param array $options
+     * @return array
+     */
+    protected function getCliArgumentsForCompareDatabaseAfter(
+        Node $node,
+        CMS $application,
+        Deployment $deployment,
+        array $options = []
+    ): array {
+
+        $databaseCompareMode = $options['databaseCompareMode'] ?? '*.add,*.change,*.prefix';
         return [
             'preCommand' => '',
             'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
