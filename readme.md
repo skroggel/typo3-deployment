@@ -171,8 +171,8 @@ return [
     'queryFileAfterUpgrade' => ''
 ];
 ```
-## File: _.htaccess.dev / _.htaccess.prod / _.htaccess.stage / config.nginx.dev / config.nginx.prod / config.nginx.stage
-Contains the settings for the given environment. You can use .htaccess for Apache or config.nginx for Nginx.
+## File: _.htaccess.dev / _.htaccess.prod / _.htaccess.stage / _.nginx.dev / _.nginx.prod / _.nginx.stage
+Contains the settings for the given environment. You can use .htaccess for Apache or .nginx for Nginx.
 Will be deployed automatically.
 
 ## File: _.htpasswd.dev / _.htpasswd.prod / _.htpasswd.stage
