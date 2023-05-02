@@ -52,9 +52,9 @@ class CopyServerConfigurationTask extends LocalShellTask
                 ' cp ' . escapeshellarg('./' . $webDir . '_.htpasswd.' . $fileExtension)
                 . ' ' . escapeshellarg('./' . $webDir . '.htpasswd') . ';' .
             ' fi' .
-            ' && if [ -f '. escapeshellarg('./' . $webDir . '_conf.nginx.' . $fileExtension). ' ]; then' .
-            ' cp ' .  escapeshellarg('./' . $webDir . '_conf.nginx.' . $fileExtension) .
-            ' ' .  escapeshellarg('./' . $webDir . 'conf.nginx') . ';' .
+            ' && if [ -f '. escapeshellarg('./' . $webDir . '_.nginx.' . $fileExtension). ' ]; then' .
+            ' cp ' .  escapeshellarg('./' . $webDir . '_.nginx.' . $fileExtension) .
+            ' ' .  escapeshellarg('./' . $webDir . '.nginx') . ';' .
             ' fi' .
             ' && echo "Copied .htaccess/conf.nginx ('. $fileExtension . ') into ' . escapeshellarg('{workspacePath}/' . $webDir) . '.";';
 
