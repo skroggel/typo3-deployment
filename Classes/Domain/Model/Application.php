@@ -39,8 +39,9 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
             'applicationRootDirectory' => 'src',
             'deploymentPath' => '',
             'scriptFileName' => 'vendor/bin/typo3cms',
-            'webDirectory' => 'web',
+            'webDirectory' => 'public',
             'adminMail' => 'deployment@steffenkroggel.de',
+            'createNonExistingSharedDirectories' => false,
             'doUpgrade' => false,
             'excludeWizards' => '',
             'queryFileBeforeUpgrade' => '',
@@ -56,7 +57,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
      * @param $options
      * @throws \Madj2k\Surf\Exception
      */
-    public function initApplication($options)
+    public function initApplication($options): void
     {
 
         // set options based on allowed options
@@ -107,6 +108,10 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
 
         // set symlinks
         $symLinks = require_once (__DIR__ . '/../../../Includes/SymLinks.php');
+        foreach ($symLinks as $source => &$destination) {
+            $destination = str_replace('###DEPLOYMENT_PATH###', $this->getOption('deploymentPath'), $destination);
+        }
+
         $this->setSymlinks($symLinks);
     }
 
@@ -117,14 +122,14 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
      * @param Workflow $workflow
      * @param Deployment $deployment
      */
-    public function registerTasks(Workflow $workflow, Deployment $deployment)
+    public function registerTasks(Workflow $workflow, Deployment $deployment): void
     {
 
         parent::registerTasks($workflow, $deployment);
 
         // remove tasks we don't need or we want to handle ourselves!
-        $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CopyConfigurationTask'); // is deprecated
-        $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CreatePackageStatesTask'); // is deprecated
+        // $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CopyConfigurationTask'); // is deprecated
+        // $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\CreatePackageStatesTask'); // is deprecated
         $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\SetUpExtensionsTask'); // not needed, throws exceptions
         $workflow->removeTask('TYPO3\\Surf\\DefinedTask\\Composer\\LocalInstallTask'); // we use an own task for that
         $workflow->removeTask('TYPO3\\Surf\\Task\\Package\\GitTask'); // we add this later on again
@@ -141,7 +146,6 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         $workflow->addTask('TYPO3\\Surf\\Task\\Package\\GitTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyEnvTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyServerConfigurationTask', 'package');
-        $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\CopyAdditionalConfigurationTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\File\\FixPermissionsTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\Git\\SetFileModeIgnoreTask', 'package');
         $workflow->addTask('Madj2k\\Surf\\Task\\Local\\Composer\\InstallTask', 'package');
@@ -149,7 +153,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         // -----------------------------------------------
         // Step 4: transfer - Here all tasks are located which serve to transfer the assets from your local computer to the node, where the application runs.
         $workflow->beforeTask('TYPO3\\Surf\\Task\\Generic\\CreateSymlinksTask', 'Madj2k\\Surf\\Task\\Remote\\File\\CreateVarFoldersTask');
-        $workflow->afterTask('TYPO3\\Surf\\Task\\Generic\\CreateSymlinksTask', 'Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\CreatePackageStatesTask');
+        // $workflow->afterTask('TYPO3\\Surf\\Task\\Generic\\CreateSymlinksTask', 'Madj2k\\Surf\\Task\\Remote\\TYPO3\\CMS\\CreatePackageStatesTask');
 
         // -----------------------------------------------
         // Step 5: update - If necessary, the transferred assets can be updated at this stage on the foreign instance.
