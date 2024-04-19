@@ -43,10 +43,9 @@ class CreatePackageStatesTask extends AbstractCliTask
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
 
-        $this->ensureApplicationIsTypo3Cms($application);
         if (!$this->packageStatesFileExists($node, $application, $deployment, $options)) {
             try {
-                $scriptFileName = $this->getConsoleScriptFileName($node, $application, $deployment, $options);
+                $scriptFileName = $this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options);
             } catch (InvalidConfigurationException $e) {
                 throw new InvalidConfigurationException('No package states file found in the repository and no typo3_console package found to generate it. We cannot proceed.', 1420210956, $e);
             }

@@ -7,14 +7,11 @@
  * @package Madj2k_T3Deployment
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-
 return [
-    './web/uploads' => '../../../surf/shared/Data/uploads',
-    './web/fileadmin' => '../../../surf/shared/Data/fileadmin',
-    './web/typo3temp/logs' => '../../../../shared/Data/logs', // deprecated path
-    './web/typo3temp/var/logs' => '../../../../../shared/Data/logs', // deprecated path
-    './var/log' => '../../../shared/Data/logs',
-    './var/labels' => '../../../shared/Data/labels',
-    './web/typo3temp/assets' => '../../../../shared/Data/assets',
-    './web/typo3conf/LocalConfiguration.php' => '../../../../shared/LocalConfiguration.php'
+    './public/fileadmin' => '###DEPLOYMENT_PATH###/shared/Data/fileadmin',
+    './var/log' => '###DEPLOYMENT_PATH###/shared/Data/var/logs',
+    './var/labels' => '###DEPLOYMENT_PATH###/shared/Data/var/labels',
+    './public/typo3temp/assets' => '###DEPLOYMENT_PATH###/shared/Data/typo3temp/assets',
+    './public/typo3conf/LocalConfiguration.php' => '###DEPLOYMENT_PATH###/shared/LocalConfiguration.php',
+    './uploads' => '###DEPLOYMENT_PATH###/shared/Data/uploads',
 ];
