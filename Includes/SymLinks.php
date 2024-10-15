@@ -9,7 +9,7 @@
  */
 return [
     './public/fileadmin' => '###DEPLOYMENT_PATH###/shared/Data/fileadmin',
-    './var/log' => '###DEPLOYMENT_PATH###/shared/Data/var/logs',
+    './var/log' => '###DEPLOYMENT_PATH###/shared/Data/var/log',
     './var/labels' => '###DEPLOYMENT_PATH###/shared/Data/var/labels',
     './public/typo3temp/assets' => '###DEPLOYMENT_PATH###/shared/Data/typo3temp/assets',
     './public/typo3conf/LocalConfiguration.php' => '###DEPLOYMENT_PATH###/shared/LocalConfiguration.php',
