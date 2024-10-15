@@ -42,10 +42,8 @@ class UnlockForEditorsTask extends AbstractCliTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $this->ensureApplicationIsTypo3Cms($application);
-
         if ($this->getAvailableCliPackage($node, $application, $deployment, $options) !== 'typo3_console') {
-            $deployment->getLogger()->warning('Extension "typo3_console" was not found! Make sure one is available in your project, or remove this task (' . __CLASS__ . ') in your deployment configuration!');
+            $this->logger->warning('Extension "typo3_console" was not found! Make sure one is available in your project, or remove this task (' . __CLASS__ . ') in your deployment configuration!');
             return;
         }
 
@@ -69,7 +67,7 @@ class UnlockForEditorsTask extends AbstractCliTask
      */
     protected function getSuitableCliArguments(Node $node, CMS $application, Deployment $deployment, array $options = []): array
     {
-        return [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'backend:unlockforeditors'];
+        return [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'backend:unlockforeditors'];
     }
 
 }

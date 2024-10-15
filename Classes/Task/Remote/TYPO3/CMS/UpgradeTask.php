@@ -43,15 +43,13 @@ class UpgradeTask extends AbstractCliTask
      */
     public function execute(Node $node, Application $application, Deployment $deployment, array $options = []): void
     {
-        $this->ensureApplicationIsTypo3Cms($application);
-
         if ($this->getAvailableCliPackage($node, $application, $deployment, $options) !== 'typo3_console') {
-            $deployment->getLogger()->warning('Extension "typo3_console" was not found! Make sure one is available in your project, or remove this task (' . __CLASS__ . ') in your deployment configuration!');
+            $this->logger->warning('Extension "typo3_console" was not found! Make sure one is available in your project, or remove this task (' . __CLASS__ . ') in your deployment configuration!');
             return;
         }
 
         if (! $options['doUpgrade']) {
-            $deployment->getLogger()->notice('Upgrade-option is not set. Set "doUpgrade" to true to do an upgrade.');
+            $this->logger->notice('Upgrade-option is not set. Set "doUpgrade" to true to do an upgrade.');
             return;
         }
 
@@ -160,7 +158,7 @@ class UpgradeTask extends AbstractCliTask
         ) {
             return [
                 'preCommand' => 'echo ' . escapeshellarg($content).  ' | ',
-                'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'],
+                'cliArguments' => [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'],
                 'postCommand' => ''
             ];
         }
@@ -194,7 +192,7 @@ class UpgradeTask extends AbstractCliTask
         ) {
             return [
                 'preCommand' => 'echo ' . escapeshellarg($content).  ' | ',
-                'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'],
+                'cliArguments' => [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'database:import'],
                 'postCommand' => ''
             ];
         }
@@ -224,7 +222,7 @@ class UpgradeTask extends AbstractCliTask
         $databaseCompareMode = $options['databaseCompareMode'] ?? '*.add,*.change';
         return [
             'preCommand' => '',
-            'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
+            'cliArguments' => [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
             'postCommand' => ''
         ];
     }
@@ -247,7 +245,7 @@ class UpgradeTask extends AbstractCliTask
         $databaseCompareMode = $options['databaseCompareMode'] ?? '*.add,*.change,*.prefix';
         return [
             'preCommand' => '',
-            'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
+            'cliArguments' => [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'database:updateschema', $databaseCompareMode],
             'postCommand' => ''
         ];
     }
@@ -280,7 +278,7 @@ class UpgradeTask extends AbstractCliTask
         ) {
             return [
                 'preCommand' => '',
-                'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'database:export'],
+                'cliArguments' => [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'database:export'],
                 'postCommand' => ' > ' . escapeshellarg($deployment->getApplicationReleasePath($application) . '/' . time() . '-dump.sql')
             ];
         }
@@ -311,7 +309,7 @@ class UpgradeTask extends AbstractCliTask
 
         return [
             'preCommand' => '',
-            'cliArguments' => [$this->getConsoleScriptFileName($node, $application, $deployment, $options), 'upgrade:wizard', $wizard, $wizardArguments],
+            'cliArguments' => [$this->getTypo3ConsoleScriptFileName($node, $application, $deployment, $options), 'upgrade:wizard', $wizard, $wizardArguments],
             'postCommand' => ''
         ];
     }

@@ -200,9 +200,10 @@ TYPO3_CONTEXT="Production"
 TYPO3_ACTIVE_FRAMEWORK_EXTENSIONS="about,backend,belog,beuser,context_help,core,cshmanual,extbase,extensionmanager,felogin,filelist,filemetadata,fluid,fluid_styled_content,frontend,func,impexp,info,info_pagetsconfig,install,lang,lowlevel,recordlist,recycler,reports,rsaauth,rte_ckeditor,saltedpasswords,scheduler,setup,sv,sys_action,sys_note,taskcenter,tstemplate,version,viewpage,wizard_crpages,wizard_sortpages"
 ```
 
-## File: web/typo3conf/AdditionalConfiguration.dev.php / AdditionalConfiguration.prod.php / AdditionalConfiguration.stage.php
+## File: public/typo3conf/AdditionalConfiguration.php
 This file contains the relevant settings for the according environment.
-**IMPORTANT: Do NOT put any access data or enycryption keys into versioning that are relevant for the live environment. These are ONLY to be put into `AdditionConfiguation.php` on production and stage respectively!!!**
+**IMPORTANT: Do NOT put any access data or enycryption keys into versioning that are relevant for the live environment.
+These are ONLY to be put into `LocalConfiguation.php` on production and stage respectively!!!**
 
 # How to deploy
 For the deployment you need a branch with the same name as the deployment-step you want to execute.
@@ -231,20 +232,19 @@ vm$ composer update
 Do the deployment using the following command from your DocumentRoot.
 
 **IMPORTANT: The surf extension requires PHP 7 on the CLI**
-**IMPORTANT: Do NOT run deployment with `root` or super-user !!! Always use your local user (e.g. `vagrant`)**
-
+**IMPORTANT: Do NOT run deployment with `root` or super-user!!! Always use your local user (e.g. via `vagrant ssh` or via `ddev ssh`)**
 **IMPORTANT: Please login to the TYPO3 backend of your target installation (Staging, Production, ...), so you may have access to it, even if anything may fail or break during the deployment with .surf.**
 
 ```
-vm$ php ./vendor/typo3/surf/surf deploy <DEPLOYMENT-FILE>
-vm$ php ./vendor/typo3/surf/surf deploy Staging
+vm$ php ./vendor/typo3/surf/bin/surf deploy <DEPLOYMENT-FILE>
+vm$ php ./vendor/typo3/surf/bin/surf deploy Staging
 ```
 
 You can use verbose-output to get more information if something goes wrong:
 ```
-vm$ php ./vendor/typo3/surf/surf deploy Staging -v
-vm$ php ./vendor/typo3/surf/surf deploy Staging -vv
-vm$ php ./vendor/typo3/surf/surf deploy Staging -vvv
+vm$ php ./vendor/typo3/surf/bin/surf deploy Staging -v
+vm$ php ./vendor/typo3/surf/bin/surf deploy Staging -vv
+vm$ php ./vendor/typo3/surf/bin/surf deploy Staging -vvv
 ```
 
 # Important hints
@@ -268,3 +268,16 @@ in your `/etc/mysql/my.cnf`
 [mysqldump]
 column-statistics=0
  ```
+## Changes with v10.4.0
+* The symlink-folders in `surf/shared/Data` have changed. Please create the following folders on your target server or move existing folders accoringly. Make sure all permissions on these folders are set to your web-user
+ ```
+mkdir typo3temp
+mv assets typo3temp/assets
+mkdir var
+mv logs var/logs
+mv labels var/labels
+mkdir uploads
+mkdir logs
+ ```
+* If you have been using `\TYPO3\CMS\Core\Cache\Backend\ApcBackend` remove this from your `LocalConfiguation.php` BEFORE upgrading to TYPO3 v10. Otherwise the deployment may not run through.
+* The extension now uses "public" as web-directory (before it was "web"). Make sure your web-directory and your symlinks on the server are changed accordingly!
