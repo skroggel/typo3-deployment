@@ -18,6 +18,7 @@ return [
     '--delete',
     '--delete-excluded',
 
+    '--include /.well-known',
     "--exclude '.git*'",
     '--exclude /.build',
     '--exclude /.buildpath',
