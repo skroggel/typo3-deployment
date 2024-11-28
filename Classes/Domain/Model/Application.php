@@ -133,6 +133,7 @@ class Application extends \TYPO3\Surf\Application\TYPO3\CMS
         $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\SetUpExtensionsTask'); // not needed, throws exceptions
         $workflow->removeTask('TYPO3\\Surf\\DefinedTask\\Composer\\LocalInstallTask'); // we use an own task for that
         $workflow->removeTask('TYPO3\\Surf\\Task\\Package\\GitTask'); // we add this later on again
+        $workflow->removeTask('TYPO3\\Surf\\Task\\TYPO3\\CMS\\SymlinkDataTask'); // we do this on our own
 
         // -----------------------------------------------
         // Step 1: initialize - This is normally used only for an initial deployment to an instance.
